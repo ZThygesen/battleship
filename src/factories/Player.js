@@ -3,7 +3,6 @@ import { Gameboard } from "./Gameboard";
 export class Player {
     constructor(name) {
         this.name = name;
-        this.ships = [];
         this.gameboard = new Gameboard();
     }
 
@@ -26,7 +25,11 @@ export class Player {
         return Math.floor(Math.random() * 10);
     }
 
-    createShip(length, coords) {
+    addShip(length, coords) {
+        return this.gameboard.placeShip(length, coords);
+    }
 
+    isWinner() {
+        return this.gameboard.allShipsSunk();
     }
 }

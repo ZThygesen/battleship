@@ -138,7 +138,6 @@ __webpack_require__.r(__webpack_exports__);
 class Player {
     constructor(name) {
         this.name = name;
-        this.ships = [];
         this.gameboard = new _Gameboard__WEBPACK_IMPORTED_MODULE_0__.Gameboard();
     }
 
@@ -161,8 +160,39 @@ class Player {
         return Math.floor(Math.random() * 10);
     }
 
-    createShip(length, coords) {
+    addShip(length, coords) {
+        return this.gameboard.placeShip(length, coords);
+    }
 
+    isWinner() {
+        return this.gameboard.allShipsSunk();
+    }
+}
+
+
+/***/ }),
+/* 4 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "GameboardDiplay": () => (/* binding */ GameboardDiplay)
+/* harmony export */ });
+class GameboardDiplay {
+    constructor(player, gameboard) {
+        this.player = player;
+        this.gameboard = gameboard;
+        this.domElem = document.querySelector(`.${this.player}-board`)
+    }
+
+    display() {
+        for (let i = 0; i < 10; i++) {
+            for (let j = 0; j < 10; j++) {
+                const square = document.createElement('div');
+                square.style.backgroundColor = (this.gameboard.board[i][j].hasShip) ? 'black' : 'grey';
+                this.domElem.appendChild(square);
+            }
+        }
     }
 }
 
@@ -229,13 +259,36 @@ var __webpack_exports__ = {};
 (() => {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _factories_Player__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
+/* harmony import */ var _display_GameboardDisplay__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4);
+
+
 
 
 const player = new _factories_Player__WEBPACK_IMPORTED_MODULE_0__.Player('You');
 const computer = new _factories_Player__WEBPACK_IMPORTED_MODULE_0__.Player('Computer');
 
-console.log(player);
-console.log(computer);
+const playerDisplay = new _display_GameboardDisplay__WEBPACK_IMPORTED_MODULE_1__.GameboardDiplay('player', player.gameboard);
+const computerDisplay = new _display_GameboardDisplay__WEBPACK_IMPORTED_MODULE_1__.GameboardDiplay('computer', computer.gameboard);
+
+player.addShip(5, [[1, 2], [1, 3], [1, 4], [1, 5], [1, 6]]);
+player.addShip(4, [[9, 6], [9, 7], [9, 8], [9, 9]]);
+player.addShip(3, [[4, 1], [5, 1], [6, 1]]);
+player.addShip(3, [[7, 3], [7, 4], [7, 5]]);
+player.addShip(2, [[3, 7], [4, 7]]);
+
+computer.addShip(5, [[1, 2], [1, 3], [1, 4], [1, 5], [1, 6]]);
+computer.addShip(4, [[9, 6], [9, 7], [9, 8], [9, 9]]);
+computer.addShip(3, [[4, 1], [5, 1], [6, 1]]);
+computer.addShip(3, [[7, 3], [7, 4], [7, 5]]);
+computer.addShip(2, [[3, 7], [4, 7]]);
+
+function updateDisplay() {
+    playerDisplay.display();
+    computerDisplay.display();
+}
+
+updateDisplay();
+
 
 
 })();
