@@ -7,9 +7,55 @@
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Player": () => (/* binding */ Player)
+/* harmony export */ });
+/* harmony import */ var _Gameboard__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
+
+
+class Player {
+    constructor(name) {
+        this.name = name;
+        this.gameboard = new _Gameboard__WEBPACK_IMPORTED_MODULE_0__.Gameboard();
+    }
+
+    makeAttack(x, y, enemyGameboard) {
+        return enemyGameboard.receiveAttack(x, y);
+    }
+
+    makeRandomAttack(enemyGameboard) {
+        let xCoord = this.getRandomCoord();
+        let yCoord = this.getRandomCoord();
+        while (!enemyGameboard.receiveAttack(xCoord, yCoord)) {
+            xCoord = this.getRandomCoord();
+            yCoord = this.getRandomCoord();
+        }
+
+        return true;
+    }
+
+    getRandomCoord() {
+        return Math.floor(Math.random() * 10);
+    }
+
+    addShip(length, coords) {
+        return this.gameboard.placeShip(length, coords);
+    }
+
+    isWinner() {
+        return this.gameboard.allShipsSunk();
+    }
+}
+
+
+/***/ }),
+/* 2 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Gameboard": () => (/* binding */ Gameboard)
 /* harmony export */ });
-/* harmony import */ var _Ship__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
+/* harmony import */ var _Ship__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 
 
 class Gameboard {
@@ -97,7 +143,7 @@ class Gameboard {
 
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -125,60 +171,14 @@ class Ship {
 
 
 /***/ }),
-/* 3 */
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Player": () => (/* binding */ Player)
-/* harmony export */ });
-/* harmony import */ var _Gameboard__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
-
-
-class Player {
-    constructor(name) {
-        this.name = name;
-        this.gameboard = new _Gameboard__WEBPACK_IMPORTED_MODULE_0__.Gameboard();
-    }
-
-    makeAttack(x, y, enemyGameboard) {
-        return enemyGameboard.receiveAttack(x, y);
-    }
-
-    makeRandomAttack(enemyGameboard) {
-        let xCoord = this.getRandomCoord();
-        let yCoord = this.getRandomCoord();
-        while (!enemyGameboard.receiveAttack(xCoord, yCoord)) {
-            xCoord = this.getRandomCoord();
-            yCoord = this.getRandomCoord();
-        }
-
-        return true;
-    }
-
-    getRandomCoord() {
-        return Math.floor(Math.random() * 10);
-    }
-
-    addShip(length, coords) {
-        return this.gameboard.placeShip(length, coords);
-    }
-
-    isWinner() {
-        return this.gameboard.allShipsSunk();
-    }
-}
-
-
-/***/ }),
 /* 4 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "GameboardDiplay": () => (/* binding */ GameboardDiplay)
+/* harmony export */   "GameboardDisplay": () => (/* binding */ GameboardDisplay)
 /* harmony export */ });
-class GameboardDiplay {
+class GameboardDisplay {
     constructor(player, gameboard) {
         this.player = player;
         this.gameboard = gameboard;
@@ -195,6 +195,121 @@ class GameboardDiplay {
         }
     }
 }
+
+
+/***/ }),
+/* 5 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Game": () => (/* binding */ Game)
+/* harmony export */ });
+/* harmony import */ var _display_GameboardDisplay__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4);
+/* harmony import */ var _helpers_GenerateComputerShips__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6);
+/* harmony import */ var _factories_Player__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1);
+
+
+
+
+class Game {
+    constructor() {
+        this.player = new _factories_Player__WEBPACK_IMPORTED_MODULE_2__.Player('You');
+        this.computer = new _factories_Player__WEBPACK_IMPORTED_MODULE_2__.Player('Computer');
+        this.playerDisplay = new _display_GameboardDisplay__WEBPACK_IMPORTED_MODULE_0__.GameboardDisplay('player', this.player.gameboard);
+        this.computerDisplay = new _display_GameboardDisplay__WEBPACK_IMPORTED_MODULE_0__.GameboardDisplay('computer', this.computer.gameboard);
+        
+        _helpers_GenerateComputerShips__WEBPACK_IMPORTED_MODULE_1__.generateComputerShips.placeShips(this.computer.gameboard);
+        this.generatePlayerShips();
+    }
+
+   /* generateComputerShips() {
+        this.computer.addShip(5, [[1, 2], [1, 3], [1, 4], [1, 5], [1, 6]]);
+        this.computer.addShip(4, [[9, 6], [9, 7], [9, 8], [9, 9]]);
+        this.computer.addShip(3, [[4, 1], [5, 1], [6, 1]]);
+        this.computer.addShip(3, [[7, 3], [7, 4], [7, 5]]);
+        this.computer.addShip(2, [[3, 7], [4, 7]]);
+    }*/
+
+    generatePlayerShips() {
+        this.player.addShip(5, [[1, 2], [1, 3], [1, 4], [1, 5], [1, 6]]);
+        this.player.addShip(4, [[9, 6], [9, 7], [9, 8], [9, 9]]);
+        this.player.addShip(3, [[4, 1], [5, 1], [6, 1]]);
+        this.player.addShip(3, [[7, 3], [7, 4], [7, 5]]);
+        this.player.addShip(2, [[3, 7], [4, 7]]);
+    }
+
+    update() {
+        this.playerDisplay.display();
+        this.computerDisplay.display();
+    }
+}
+
+
+/***/ }),
+/* 6 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "generateComputerShips": () => (/* binding */ generateComputerShips)
+/* harmony export */ });
+const generateComputerShips = (function () {
+    const ships = [5, 4, 3, 3, 2];
+
+    const placeShips = (gameboard) => {
+        for (let i = 0; i < ships.length; i++) {
+            let success = tryPlace(ships[i], gameboard);
+
+            while (!success) {
+                success = tryPlace(ships[i], gameboard);
+            }
+        }
+    }
+
+    const tryPlace = (shipLength, gameboard) => {
+        const coords = generateShipCoords(shipLength);
+        
+        return gameboard.placeShip(shipLength, coords);
+    }
+
+    const generateShipCoords = (shipLength) => {
+        const coords = [];
+        const direction = getRandomDirection();
+        const gridline = getRandomGridline();
+        const startSquare = getRandomStartSquare(shipLength);
+
+        // horizontal === 0; vertical === 1
+        if (direction === 0) {
+            for (let i = startSquare; i < startSquare + shipLength; i++) {
+                coords.push([gridline, i]);
+            }
+        } else {
+            for (let i = startSquare; i < startSquare + shipLength; i++) {
+                coords.push([i, gridline]);
+            }
+        }
+
+        return coords;
+    }
+
+    const getRandomDirection = () => {
+        return Math.floor(Math.random() * 2);
+    }
+
+    const getRandomGridline = () => {
+        return Math.floor(Math.random() * 10);
+    }
+
+    const getRandomStartSquare = (shipLength) => {
+        return Math.floor(Math.random() * (10 - shipLength));
+    }
+
+    return { placeShips };
+    
+})();
+
+
 
 
 /***/ })
@@ -258,36 +373,12 @@ var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _factories_Player__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _display_GameboardDisplay__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4);
+/* harmony import */ var _Game__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5);
 
 
+const game = new _Game__WEBPACK_IMPORTED_MODULE_0__.Game();
 
-
-const player = new _factories_Player__WEBPACK_IMPORTED_MODULE_0__.Player('You');
-const computer = new _factories_Player__WEBPACK_IMPORTED_MODULE_0__.Player('Computer');
-
-const playerDisplay = new _display_GameboardDisplay__WEBPACK_IMPORTED_MODULE_1__.GameboardDiplay('player', player.gameboard);
-const computerDisplay = new _display_GameboardDisplay__WEBPACK_IMPORTED_MODULE_1__.GameboardDiplay('computer', computer.gameboard);
-
-player.addShip(5, [[1, 2], [1, 3], [1, 4], [1, 5], [1, 6]]);
-player.addShip(4, [[9, 6], [9, 7], [9, 8], [9, 9]]);
-player.addShip(3, [[4, 1], [5, 1], [6, 1]]);
-player.addShip(3, [[7, 3], [7, 4], [7, 5]]);
-player.addShip(2, [[3, 7], [4, 7]]);
-
-computer.addShip(5, [[1, 2], [1, 3], [1, 4], [1, 5], [1, 6]]);
-computer.addShip(4, [[9, 6], [9, 7], [9, 8], [9, 9]]);
-computer.addShip(3, [[4, 1], [5, 1], [6, 1]]);
-computer.addShip(3, [[7, 3], [7, 4], [7, 5]]);
-computer.addShip(2, [[3, 7], [4, 7]]);
-
-function updateDisplay() {
-    playerDisplay.display();
-    computerDisplay.display();
-}
-
-updateDisplay();
+game.update();
 
 
 
