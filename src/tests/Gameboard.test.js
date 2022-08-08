@@ -1,4 +1,4 @@
-import { Gameboard } from "../Gameboard";
+import { Gameboard } from "../factories/Gameboard";
 
 describe('Gameboard tests', () => {
     let gameboard;
