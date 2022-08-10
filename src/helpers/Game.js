@@ -51,7 +51,7 @@ export class Game {
         }
 
         display.setGameStatus('Computer\'s turn!');
-        setTimeout(() => this.computerAttack(), 0);
+        setTimeout(() => this.computerAttack(), 1000);
     }
 
     computerAttack() {

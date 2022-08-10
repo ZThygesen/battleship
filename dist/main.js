@@ -9,9 +9,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Game": () => (/* binding */ Game)
 /* harmony export */ });
-/* harmony import */ var _display_Display__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(7);
-/* harmony import */ var _GenerateShips__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3);
-/* harmony import */ var _factories_Player__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(4);
+/* harmony import */ var _display_Display__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
+/* harmony import */ var _GenerateShips__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4);
+/* harmony import */ var _factories_Player__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(5);
 
 
 
@@ -65,7 +65,7 @@ class Game {
         }
 
         _display_Display__WEBPACK_IMPORTED_MODULE_0__.display.setGameStatus('Computer\'s turn!');
-        setTimeout(() => this.computerAttack(), 0);
+        setTimeout(() => this.computerAttack(), 1000);
     }
 
     computerAttack() {
@@ -94,6 +94,69 @@ class Game {
 
 /***/ }),
 /* 2 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "display": () => (/* binding */ display)
+/* harmony export */ });
+/* harmony import */ var _GameboardDisplay__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
+
+
+const display = (function () {
+    const setupElem = document.querySelector('.setup');
+    const playAreaElem = document.querySelector('.play-area');
+    const gameOverElem = document.querySelector('.game-over');
+
+    const gameStatus = document.querySelector('#game-status');
+
+    const displayGameboard = (gameboard, cssClass) => {
+        return new _GameboardDisplay__WEBPACK_IMPORTED_MODULE_0__.GameboardDisplay(gameboard, cssClass);
+    }
+
+    const hideGameboard = (gameboard) => {
+        gameboard.hide();
+    }
+
+    const showGameboard = (gameboard) => {
+        gameboard.show();
+    }
+
+    const setup = () => {
+        setupElem.style.display = 'flex';
+        gameOverElem.style.display = 'none';
+    }
+
+    const startGame = () => {
+        setupElem.style.display = 'none';
+        playAreaElem.style.display = 'block';
+    }
+
+    const gameOver = (player) => {
+        playAreaElem.style.display = 'none';
+        gameOverElem.style.display = 'block';
+
+        const message = document.querySelector('#winner');
+        if (player === 'You') {
+            message.textContent = 'You win!';
+        } else {
+            message.textContent = 'Computer wins!';
+        }
+    }
+
+    const setGameStatus = (status) => {
+        gameStatus.textContent = status;
+    }
+
+    return { displayGameboard, hideGameboard, showGameboard, setup, startGame, gameOver, setGameStatus };
+})();
+
+
+
+
+
+/***/ }),
+/* 3 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -186,7 +249,7 @@ class GameboardDisplay {
 
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -252,14 +315,14 @@ const generateShips = (function () {
 
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Player": () => (/* binding */ Player)
 /* harmony export */ });
-/* harmony import */ var _Gameboard__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5);
+/* harmony import */ var _Gameboard__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6);
 
 
 class Player {
@@ -298,14 +361,14 @@ class Player {
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Gameboard": () => (/* binding */ Gameboard)
 /* harmony export */ });
-/* harmony import */ var _Ship__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6);
+/* harmony import */ var _Ship__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(7);
 
 
 class Gameboard {
@@ -398,7 +461,7 @@ class Gameboard {
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -428,69 +491,6 @@ class Ship {
         this.color = color;
     }
 }
-
-
-/***/ }),
-/* 7 */
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "display": () => (/* binding */ display)
-/* harmony export */ });
-/* harmony import */ var _GameboardDisplay__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
-
-
-const display = (function () {
-    const setupElem = document.querySelector('.setup');
-    const playAreaElem = document.querySelector('.play-area');
-    const gameOverElem = document.querySelector('.game-over');
-
-    const gameStatus = document.querySelector('#game-status');
-
-    const displayGameboard = (gameboard, cssClass) => {
-        return new _GameboardDisplay__WEBPACK_IMPORTED_MODULE_0__.GameboardDisplay(gameboard, cssClass);
-    }
-
-    const hideGameboard = (gameboard) => {
-        gameboard.hide();
-    }
-
-    const showGameboard = (gameboard) => {
-        gameboard.show();
-    }
-
-    const setup = () => {
-        setupElem.style.display = 'flex';
-        gameOverElem.style.display = 'none';
-    }
-
-    const startGame = () => {
-        setupElem.style.display = 'none';
-        playAreaElem.style.display = 'block';
-    }
-
-    const gameOver = (player) => {
-        playAreaElem.style.display = 'none';
-        gameOverElem.style.display = 'block';
-
-        const message = document.querySelector('#winner');
-        if (player === 'You') {
-            message.textContent = 'You win!';
-        } else {
-            message.textContent = 'Computer wins!';
-        }
-    }
-
-    const setGameStatus = (status) => {
-        gameStatus.textContent = status;
-    }
-
-    return { displayGameboard, hideGameboard, showGameboard, setup, startGame, gameOver, setGameStatus };
-})();
-
-
-
 
 
 /***/ })
