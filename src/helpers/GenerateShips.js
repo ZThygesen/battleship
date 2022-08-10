@@ -1,4 +1,4 @@
-const generateComputerShips = (function () {
+const generateShips = (function () {
     const ships = [5, 4, 3, 3, 2];
 
     const placeShips = (gameboard) => {
@@ -53,4 +53,4 @@ const generateComputerShips = (function () {
     
 })();
 
-export { generateComputerShips };
+export { generateShips };

@@ -29,7 +29,7 @@ export class Player {
         return this.gameboard.placeShip(length, coords);
     }
 
-    isWinner() {
+    isSunk() {
         return this.gameboard.allShipsSunk();
     }
 }

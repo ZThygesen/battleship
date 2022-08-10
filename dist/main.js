@@ -7,9 +7,259 @@
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Game": () => (/* binding */ Game)
+/* harmony export */ });
+/* harmony import */ var _display_Display__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(7);
+/* harmony import */ var _GenerateShips__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(3);
+/* harmony import */ var _factories_Player__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(4);
+
+
+
+
+const computerBoard = document.querySelector('.play-computer-board');
+
+class Game {
+    constructor() {
+        _display_Display__WEBPACK_IMPORTED_MODULE_0__.display.setup();
+
+        this.player = new _factories_Player__WEBPACK_IMPORTED_MODULE_2__.Player('You');
+        this.computer = new _factories_Player__WEBPACK_IMPORTED_MODULE_2__.Player('Computer');
+        this.playerDisplay = _display_Display__WEBPACK_IMPORTED_MODULE_0__.display.displayGameboard(this.player.gameboard, 'setup-player-board');
+        this.computerDisplay = _display_Display__WEBPACK_IMPORTED_MODULE_0__.display.displayGameboard(this.computer.gameboard, 'play-computer-board');
+        
+        _display_Display__WEBPACK_IMPORTED_MODULE_0__.display.showGameboard(this.playerDisplay);
+        _display_Display__WEBPACK_IMPORTED_MODULE_0__.display.hideGameboard(this.computerDisplay);
+
+        _GenerateShips__WEBPACK_IMPORTED_MODULE_1__.generateShips.placeShips(this.computer.gameboard);
+        _GenerateShips__WEBPACK_IMPORTED_MODULE_1__.generateShips.placeShips(this.player.gameboard);
+    }
+
+    shuffleBoard() {
+        this.player.gameboard.resetBoard();
+        _GenerateShips__WEBPACK_IMPORTED_MODULE_1__.generateShips.placeShips(this.player.gameboard);
+        this.update();
+    }
+
+    playGame() {
+        _display_Display__WEBPACK_IMPORTED_MODULE_0__.display.startGame();
+        this.playerDisplay = _display_Display__WEBPACK_IMPORTED_MODULE_0__.display.displayGameboard(this.player.gameboard, 'play-player-board', this);
+    
+        _display_Display__WEBPACK_IMPORTED_MODULE_0__.display.showGameboard(this.playerDisplay);
+        _display_Display__WEBPACK_IMPORTED_MODULE_0__.display.showGameboard(this.computerDisplay);
+
+        this.update();
+    }
+
+    playerAttack(x, y) {
+        if (!this.player.makeAttack(x, y, this.computer.gameboard)) {
+            _display_Display__WEBPACK_IMPORTED_MODULE_0__.display.setGameStatus('You already attacked there!');
+            return;
+        }
+
+        this.update();
+
+        computerBoard.style.pointerEvents = 'none';
+        
+        if (this.checkIfSunk(this.computer)) {
+            _display_Display__WEBPACK_IMPORTED_MODULE_0__.display.gameOver(this.player.name);
+        }
+
+        _display_Display__WEBPACK_IMPORTED_MODULE_0__.display.setGameStatus('Computer\'s turn!');
+        setTimeout(() => this.computerAttack(), 0);
+    }
+
+    computerAttack() {
+        this.computer.makeRandomAttack(this.player.gameboard);
+
+        this.update();
+
+        if (this.checkIfSunk(this.player)) {
+            _display_Display__WEBPACK_IMPORTED_MODULE_0__.display.gameOver(this.computer.name);
+        }
+
+        _display_Display__WEBPACK_IMPORTED_MODULE_0__.display.setGameStatus('Your turn!');
+        computerBoard.style.pointerEvents = 'all';
+    }
+
+    checkIfSunk(player) {
+        return player.isSunk();
+    }
+
+    update() {
+        this.playerDisplay.display(this);
+        this.computerDisplay.display(this);
+    }
+}
+
+
+/***/ }),
+/* 2 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "GameboardDisplay": () => (/* binding */ GameboardDisplay)
+/* harmony export */ });
+const colors = ['#710c04', '#d21404', '#420c09', '#900603', '#bc544b'];
+
+class GameboardDisplay {
+    constructor(gameboard, cssClass) {
+        this.gameboard = gameboard;
+        this.cssClass = cssClass;
+        this.domElem = document.querySelector(`.${this.cssClass}`);
+    }
+
+    display(game) {
+        this.colorShips();
+
+        this.domElem.innerHTML = '';
+        for (let i = 0; i < 10; i++) {
+            for (let j = 0; j < 10; j++) {
+                const square = document.createElement('div');
+                square.className = `${i} ${j}`;
+                if (/computer/.test(this.cssClass)) {
+                    square.addEventListener('click', () => {
+                        this.attack(square, game);
+                    });
+
+                    this.colorComputerSquare(square, this.gameboard.board[i][j]);
+                } else {
+                    this.colorPlayerSquare(square, this.gameboard.board[i][j]);
+                }
+    
+                this.domElem.appendChild(square);
+            }
+        }
+    }
+
+    colorShips() {
+        for (let i = 0; i < 5; i++) {
+            this.gameboard.ships[i].setColor(colors[i]);
+        }
+    }
+
+    colorComputerSquare(square, tile) {
+        let color;
+        if (tile.hasShip && tile.boardHit) {
+            color = 'transparent';
+            square.classList.add('hit');
+        } else if (tile.boardHit) {
+            color = 'transparent';
+        } else {
+            color = '#bec2cb';
+        }
+        
+        square.style.backgroundColor = color;
+    }
+
+    colorPlayerSquare(square, tile) {
+        let color;
+        if (tile.hasShip && tile.boardHit) {
+            color = 'transparent';
+            square.classList.add('hit');
+        } else if (tile.hasShip) {
+            color = tile.ship.color;
+        } else if (tile.boardHit) {
+            color = 'transparent';
+        } else {
+            color = '#bec2cb';
+        }
+        
+        square.style.backgroundColor = color;
+    }
+
+    attack(square, game) {
+        const [x, y] = square.className.split(' ');
+        game.playerAttack(x, y);
+    }
+
+    hide() {
+        this.domElem.style.display = 'none';
+    }
+
+    show() {
+        this.domElem.style.display = 'grid';
+    }
+}
+
+
+
+
+/***/ }),
+/* 3 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "generateShips": () => (/* binding */ generateShips)
+/* harmony export */ });
+const generateShips = (function () {
+    const ships = [5, 4, 3, 3, 2];
+
+    const placeShips = (gameboard) => {
+        for (let i = 0; i < ships.length; i++) {
+            let success = tryPlace(ships[i], gameboard);
+
+            while (!success) {
+                success = tryPlace(ships[i], gameboard);
+            }
+        }
+    }
+
+    const tryPlace = (shipLength, gameboard) => {
+        const coords = generateShipCoords(shipLength);
+        
+        return gameboard.placeShip(shipLength, coords);
+    }
+
+    const generateShipCoords = (shipLength) => {
+        const coords = [];
+        const direction = getRandomDirection();
+        const gridline = getRandomGridline();
+        const startSquare = getRandomStartSquare(shipLength);
+
+        // horizontal === 0; vertical === 1
+        if (direction === 0) {
+            for (let i = startSquare; i < startSquare + shipLength; i++) {
+                coords.push([gridline, i]);
+            }
+        } else {
+            for (let i = startSquare; i < startSquare + shipLength; i++) {
+                coords.push([i, gridline]);
+            }
+        }
+
+        return coords;
+    }
+
+    const getRandomDirection = () => {
+        return Math.floor(Math.random() * 2);
+    }
+
+    const getRandomGridline = () => {
+        return Math.floor(Math.random() * 10);
+    }
+
+    const getRandomStartSquare = (shipLength) => {
+        return Math.floor(Math.random() * (10 - shipLength));
+    }
+
+    return { placeShips };
+    
+})();
+
+
+
+
+/***/ }),
+/* 4 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Player": () => (/* binding */ Player)
 /* harmony export */ });
-/* harmony import */ var _Gameboard__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
+/* harmony import */ var _Gameboard__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5);
 
 
 class Player {
@@ -41,21 +291,21 @@ class Player {
         return this.gameboard.placeShip(length, coords);
     }
 
-    isWinner() {
+    isSunk() {
         return this.gameboard.allShipsSunk();
     }
 }
 
 
 /***/ }),
-/* 2 */
+/* 5 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Gameboard": () => (/* binding */ Gameboard)
 /* harmony export */ });
-/* harmony import */ var _Ship__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
+/* harmony import */ var _Ship__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6);
 
 
 class Gameboard {
@@ -139,11 +389,16 @@ class Gameboard {
 
         return coords;
     }
+
+    resetBoard() {
+        this.ships = [];
+        this.board = this.generateCoords();
+    }
 }
 
 
 /***/ }),
-/* 3 */
+/* 6 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
@@ -154,6 +409,7 @@ class Ship {
     constructor(length) {
         this.length = length;
         this.hits = [];
+        this.color;
     }
 
     hit(location) {
@@ -167,147 +423,72 @@ class Ship {
     isSunk() {
         return this.length === this.hits.length;
     }
-}
 
-
-/***/ }),
-/* 4 */
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "GameboardDisplay": () => (/* binding */ GameboardDisplay)
-/* harmony export */ });
-class GameboardDisplay {
-    constructor(player, gameboard) {
-        this.player = player;
-        this.gameboard = gameboard;
-        this.domElem = document.querySelector(`.${this.player}-board`)
-    }
-
-    display() {
-        for (let i = 0; i < 10; i++) {
-            for (let j = 0; j < 10; j++) {
-                const square = document.createElement('div');
-                square.style.backgroundColor = (this.gameboard.board[i][j].hasShip) ? 'black' : 'grey';
-                this.domElem.appendChild(square);
-            }
-        }
+    setColor(color) {
+        this.color = color;
     }
 }
 
 
 /***/ }),
-/* 5 */
+/* 7 */
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "Game": () => (/* binding */ Game)
+/* harmony export */   "display": () => (/* binding */ display)
 /* harmony export */ });
-/* harmony import */ var _display_GameboardDisplay__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4);
-/* harmony import */ var _helpers_GenerateComputerShips__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6);
-/* harmony import */ var _factories_Player__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(1);
+/* harmony import */ var _GameboardDisplay__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
 
 
+const display = (function () {
+    const setupElem = document.querySelector('.setup');
+    const playAreaElem = document.querySelector('.play-area');
+    const gameOverElem = document.querySelector('.game-over');
 
+    const gameStatus = document.querySelector('#game-status');
 
-class Game {
-    constructor() {
-        this.player = new _factories_Player__WEBPACK_IMPORTED_MODULE_2__.Player('You');
-        this.computer = new _factories_Player__WEBPACK_IMPORTED_MODULE_2__.Player('Computer');
-        this.playerDisplay = new _display_GameboardDisplay__WEBPACK_IMPORTED_MODULE_0__.GameboardDisplay('player', this.player.gameboard);
-        this.computerDisplay = new _display_GameboardDisplay__WEBPACK_IMPORTED_MODULE_0__.GameboardDisplay('computer', this.computer.gameboard);
-        
-        _helpers_GenerateComputerShips__WEBPACK_IMPORTED_MODULE_1__.generateComputerShips.placeShips(this.computer.gameboard);
-        this.generatePlayerShips();
+    const displayGameboard = (gameboard, cssClass) => {
+        return new _GameboardDisplay__WEBPACK_IMPORTED_MODULE_0__.GameboardDisplay(gameboard, cssClass);
     }
 
-   /* generateComputerShips() {
-        this.computer.addShip(5, [[1, 2], [1, 3], [1, 4], [1, 5], [1, 6]]);
-        this.computer.addShip(4, [[9, 6], [9, 7], [9, 8], [9, 9]]);
-        this.computer.addShip(3, [[4, 1], [5, 1], [6, 1]]);
-        this.computer.addShip(3, [[7, 3], [7, 4], [7, 5]]);
-        this.computer.addShip(2, [[3, 7], [4, 7]]);
-    }*/
-
-    generatePlayerShips() {
-        this.player.addShip(5, [[1, 2], [1, 3], [1, 4], [1, 5], [1, 6]]);
-        this.player.addShip(4, [[9, 6], [9, 7], [9, 8], [9, 9]]);
-        this.player.addShip(3, [[4, 1], [5, 1], [6, 1]]);
-        this.player.addShip(3, [[7, 3], [7, 4], [7, 5]]);
-        this.player.addShip(2, [[3, 7], [4, 7]]);
+    const hideGameboard = (gameboard) => {
+        gameboard.hide();
     }
 
-    update() {
-        this.playerDisplay.display();
-        this.computerDisplay.display();
-    }
-}
-
-
-/***/ }),
-/* 6 */
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "generateComputerShips": () => (/* binding */ generateComputerShips)
-/* harmony export */ });
-const generateComputerShips = (function () {
-    const ships = [5, 4, 3, 3, 2];
-
-    const placeShips = (gameboard) => {
-        for (let i = 0; i < ships.length; i++) {
-            let success = tryPlace(ships[i], gameboard);
-
-            while (!success) {
-                success = tryPlace(ships[i], gameboard);
-            }
-        }
+    const showGameboard = (gameboard) => {
+        gameboard.show();
     }
 
-    const tryPlace = (shipLength, gameboard) => {
-        const coords = generateShipCoords(shipLength);
-        
-        return gameboard.placeShip(shipLength, coords);
+    const setup = () => {
+        setupElem.style.display = 'flex';
+        gameOverElem.style.display = 'none';
     }
 
-    const generateShipCoords = (shipLength) => {
-        const coords = [];
-        const direction = getRandomDirection();
-        const gridline = getRandomGridline();
-        const startSquare = getRandomStartSquare(shipLength);
+    const startGame = () => {
+        setupElem.style.display = 'none';
+        playAreaElem.style.display = 'block';
+    }
 
-        // horizontal === 0; vertical === 1
-        if (direction === 0) {
-            for (let i = startSquare; i < startSquare + shipLength; i++) {
-                coords.push([gridline, i]);
-            }
+    const gameOver = (player) => {
+        playAreaElem.style.display = 'none';
+        gameOverElem.style.display = 'block';
+
+        const message = document.querySelector('#winner');
+        if (player === 'You') {
+            message.textContent = 'You win!';
         } else {
-            for (let i = startSquare; i < startSquare + shipLength; i++) {
-                coords.push([i, gridline]);
-            }
+            message.textContent = 'Computer wins!';
         }
-
-        return coords;
     }
 
-    const getRandomDirection = () => {
-        return Math.floor(Math.random() * 2);
+    const setGameStatus = (status) => {
+        gameStatus.textContent = status;
     }
 
-    const getRandomGridline = () => {
-        return Math.floor(Math.random() * 10);
-    }
-
-    const getRandomStartSquare = (shipLength) => {
-        return Math.floor(Math.random() * (10 - shipLength));
-    }
-
-    return { placeShips };
-    
+    return { displayGameboard, hideGameboard, showGameboard, setup, startGame, gameOver, setGameStatus };
 })();
+
 
 
 
@@ -373,14 +554,24 @@ var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 (() => {
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _Game__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(5);
+/* harmony import */ var _helpers_Game__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 
 
-const game = new _Game__WEBPACK_IMPORTED_MODULE_0__.Game();
+let game = new _helpers_Game__WEBPACK_IMPORTED_MODULE_0__.Game();
+
+const shuffleBtn = document.querySelector('#shuffle');
+shuffleBtn.addEventListener('click', () => game.shuffleBoard());
+
+const startGameBtn = document.querySelector('#play');
+startGameBtn.addEventListener('click', () => game.playGame());
 
 game.update();
 
-
+const playAgain = document.querySelector('#restart');
+playAgain.addEventListener('click', () => {
+    game = new _helpers_Game__WEBPACK_IMPORTED_MODULE_0__.Game();
+    game.update();
+})
 
 })();
 

@@ -81,4 +81,9 @@ export class Gameboard {
 
         return coords;
     }
+
+    resetBoard() {
+        this.ships = [];
+        this.board = this.generateCoords();
+    }
 }
