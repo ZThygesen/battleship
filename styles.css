@@ -1,27 +1,154 @@
+@font-face {
+    font-family: 'Military';
+    src: url(./fonts/BlackOpsOne-Regular.ttf);
+}
+
+:root {
+   --bgc: #35363e; 
+   --font: #bec2cb;
+   --button-highlight: #123;
+}
+
 body {
     margin: 0;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
+    font-family: 'Military', sans-serif;
+    color: var(--font);
+    background-image: linear-gradient(to top, black 0, #123 100%);
 }
+
+/* ------------------------------------------------------- */
 
 header {
-    height: 60px;
+    height: 100px;
     display: flex;
     align-items: center;
+    font-size: 70px;
 }
 
+/* ------------------------------------------------------- */
+
 .content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 200px;
+}
+
+.play-area, .game-over {
+    display: none;
+}
+
+/* ------------------------------------------------------- */
+
+.setup {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.setup-player-board {
+    width: min(80vw, 600px);
+    height: min(80vw, 600px);
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(10, 1fr);
+    gap: 10px;
+}
+
+button {
+    font-family: 'Military', sans-serif;
+    font-size: 20px;
+    color: var(--font);
+    border-style: none;
+    background: none;
+    border-radius: 10px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 10px 20px;
+    transition: all 0.2s;
+}
+
+button:hover {
+    cursor: pointer;
+    background-color: var(--button-highlight);
+}
+
+/* ------------------------------------------------------- */
+
+.gameboards {
     display: flex;
     gap: 5vw;
 }
 
-.player-board, .computer-board {
-    width: 40vw;
-    height: 40vw;
+.player, .computer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 24px;
+    gap: 10px;
+}
+
+.play-player-board,
+.play-computer-board {
+    width: min(40vw, 500px);
+    height: min(40vw, 500px);
     display: grid;
     grid-template-columns: repeat(10, 1fr);
     grid-template-rows: repeat(10, 1fr);
+    gap: 7px;
 }
 
+.play-player-board > *,
+.play-computer-board > * {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.play-computer-board > *:hover {
+    cursor: pointer;
+    opacity: 0.6;
+}
+
+.hit {
+    background-image: url(./images/explosion.png);
+    background-position: center;
+    background-size: cover;
+}
+
+/* ------------------------------------------------------- */
+
+.game-over {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 70px;
+}
+
+/* ------------------------------------------------------- */
+
+@media (max-width: 600px) {
+    header {
+        font-size: 14vw;
+    }
+
+    .gameboards {
+        flex-direction: column;
+    }
+
+    .play-player-board,
+    .play-computer-board {
+        width: min(60vw, 500px);
+        height: min(60vw, 500px);
+    }
+}
